@@ -9,7 +9,10 @@ import SwiftUI
 
 struct TaskListItemView: View {
     
-    @Binding var task: Task
+    @Bindable var task: Task
+    
+    // Model context for saving Data
+    @Environment(\.modelContext) private var context
     
     var body: some View {
         HStack(alignment: .top, spacing: 15) {
@@ -43,9 +46,17 @@ struct TaskListItemView: View {
             })
             .padding(15)
             .hSpacing(.leading)
-            .background(task.tint, in: .rect(topLeadingRadius: 10, bottomLeadingRadius: 10))
+            .background(task.tintColor, in: .rect(topLeadingRadius: 10, bottomLeadingRadius: 10))
             .strikethrough(task.isCompleted, pattern: .solid, color: .black)
+            .contentShape(.contextMenuPreview, .rect(cornerRadius: 10))
+            .contextMenu {
+                Button("Delete Task", role:.destructive){
+                    context.delete(task)
+                    try? context.save()
+                }
+            }
             .offset(y: -0)
+            
 
         }
         
